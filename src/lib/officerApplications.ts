@@ -26,6 +26,8 @@ export interface OfficerApplicationRecord {
   employeeNumber: string;
   district: string;
   upazila: string;
+  assignedDistrict: string | null;
+  assignedUpazila: string | null;
   appointmentLetterPath: string;
   notificationStatus: 'not_sent' | 'pending' | 'sending' | 'sent' | 'failed';
   notificationAttempts: number;
@@ -103,7 +105,7 @@ export async function getMyOfficerApplications(): Promise<OfficerApplicationReco
   if (userError || !userData.user) return [];
   const { data, error } = await supabase
     .from('officer_applications')
-    .select('id, status, rejection_reason, submitted_at, created_at, applicant_name, applicant_email, applicant_phone, department, designation, employee_number, office_district, office_upazila, appointment_letter_path, notification_status, notification_attempts, decided_at')
+    .select('id, status, rejection_reason, submitted_at, created_at, applicant_name, applicant_email, applicant_phone, department, designation, employee_number, office_district, office_upazila, assigned_district, assigned_upazila, appointment_letter_path, notification_status, notification_attempts, decided_at')
     .eq('applicant_id', userData.user.id)
     .order('created_at', { ascending: false });
   if (error || !data) return [];
@@ -129,7 +131,7 @@ export async function getMyOfficerApplicationEvents(applicationId: string): Prom
 export async function getAdminOfficerApplications(): Promise<OfficerApplicationRecord[]> {
   const { data, error } = await supabase
     .from('officer_applications')
-    .select('id, status, rejection_reason, submitted_at, created_at, applicant_name, applicant_email, applicant_phone, department, designation, employee_number, office_district, office_upazila, appointment_letter_path, notification_status, notification_attempts, decided_at')
+    .select('id, status, rejection_reason, submitted_at, created_at, applicant_name, applicant_email, applicant_phone, department, designation, employee_number, office_district, office_upazila, assigned_district, assigned_upazila, appointment_letter_path, notification_status, notification_attempts, decided_at')
     .order('created_at', { ascending: false });
   if (error || !data) return [];
   return data.map(mapApplication);
@@ -147,12 +149,18 @@ export async function getAppointmentLetterUrl(path: string): Promise<string | nu
 }
 
 export async function decideOfficerApplication(
-  action: 'approve' | 'reject' | 'retry_notification',
+  action: 'approve' | 'reject' | 'retry_notification' | 'assign_area',
   applicationId: string,
-  reason?: string,
+  options?: { reason?: string; district?: string; upazila?: string },
 ): Promise<{ ok: boolean; notificationStatus?: string }> {
   const { data, error } = await supabase.functions.invoke('officer-admin', {
-    body: { action, applicationId, ...(reason ? { reason } : {}) },
+    body: {
+      action,
+      applicationId,
+      ...(options?.reason ? { reason: options.reason } : {}),
+      ...(options?.district ? { assignedDistrict: options.district } : {}),
+      ...(options?.upazila ? { assignedUpazila: options.upazila } : {}),
+    },
   });
   if (error || !data?.ok) return { ok: false };
   return { ok: true, notificationStatus: data.notificationStatus as string | undefined };
@@ -173,6 +181,8 @@ function mapApplication(row: Record<string, unknown>): OfficerApplicationRecord 
     employeeNumber: row.employee_number as string,
     district: row.office_district as string,
     upazila: row.office_upazila as string,
+    assignedDistrict: row.assigned_district as string | null,
+    assignedUpazila: row.assigned_upazila as string | null,
     appointmentLetterPath: row.appointment_letter_path as string,
     notificationStatus: row.notification_status as OfficerApplicationRecord['notificationStatus'],
     notificationAttempts: row.notification_attempts as number,

@@ -137,9 +137,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
                 <div className="w-8 h-8 rounded-lg bg-[#D8E8DF] flex items-center justify-center text-[#123B32] mb-2">
                   <CheckCircle className="w-4 h-4" />
                 </div>
-                <div className="text-2xl font-bold text-[#123B32] font-serif-title">99%</div>
-                <div className="text-xs font-medium text-[#1F2933]">Accuracy Rate</div>
-                <div className="text-[11px] text-[#64748B]">(Satellite Match)</div>
+                <div className="text-2xl font-bold text-[#123B32] font-serif-title">—</div>
+                <div className="text-xs font-medium text-[#1F2933]">{language === 'bn' ? 'যাচাইকৃত নির্ভুলতার হার' : 'Verified accuracy rate'}</div>
+                <div className="text-[11px] text-[#64748B]">{language === 'bn' ? '(প্রকৃত বিশ্লেষণ যুক্ত নয়)' : '(No analysis connected)'}</div>
               </div>
 
               {/* Stat 4: 99.9% */}
@@ -147,9 +147,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
                 <div className="w-8 h-8 rounded-lg bg-[#D8E8DF] flex items-center justify-center text-[#123B32] mb-2">
                   <Clock className="w-4 h-4" />
                 </div>
-                <div className="text-2xl font-bold text-[#123B32] font-serif-title">99.9%</div>
-                <div className="text-xs font-medium text-[#1F2933]">Platform Uptime</div>
-                <div className="text-[11px] text-[#64748B]">(Offline Capable)</div>
+                <div className="text-2xl font-bold text-[#123B32] font-serif-title">—</div>
+                <div className="text-xs font-medium text-[#1F2933]">{language === 'bn' ? 'পরিষেবা সচলতার হার' : 'Service uptime'}</div>
+                <div className="text-[11px] text-[#64748B]">{language === 'bn' ? '(এখনো পরিমাপ করা হয়নি)' : '(Not measured yet)'}</div>
               </div>
 
             </div>

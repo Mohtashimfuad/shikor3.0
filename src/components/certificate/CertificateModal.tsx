@@ -30,7 +30,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
           <div className="flex items-center space-x-2">
             <Scale className="w-5 h-5 text-[#C6A66B]" />
             <span className="font-serif-title font-bold text-sm tracking-wide">
-              {language === 'bn' ? 'নদীভাঙন ভূমিহীন সনদপত্র (যাচাইকৃত প্রমাণক)' : 'Official Land Loss Certificate (Verifiable Evidence)'}
+              {language === 'bn' ? 'নদীভাঙন রেকর্ডের নমুনা' : 'Sample erosion record'}
             </span>
           </div>
 
@@ -54,6 +54,10 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
 
         {/* Certificate Paper Body with Ornamental Border */}
         <div className="p-8 sm:p-10 bg-[#Fdfbf7] relative">
+
+          <div role="note" className="mb-5 rounded-lg border-2 border-amber-500 bg-amber-50 px-4 py-3 text-center text-xs font-bold text-amber-950">
+            {language === 'bn' ? 'নমুনা মাত্র — এটি সরকারি সনদ নয়, প্রকৃত যাচাইকরণ বা জমির অধিকার প্রমাণ করে না' : 'SAMPLE ONLY — not an official certificate and does not verify a real claim or land right'}
+          </div>
           
           {/* Subtle watermark seal */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
@@ -69,10 +73,10 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                 CIVIC GEOSPATIAL CITIZEN EVIDENCE DOSSIER
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-[#123B32] font-serif-title">
-                CERTIFICATE OF INUNDATION & LAND LOSS
+                SAMPLE RECORD OF REPORTED INUNDATION
               </h2>
               <p className="text-sm font-semibold text-[#123B32]/90 font-serif-title">
-                নদীভাঙন জনিত ভূমিহীন ও খাসজমি পুনর্বাসন সনদপত্র
+                নদীভাঙনে জমি হারানোর প্রতিবেদনের নমুনা
               </p>
               <p className="text-[11px] text-[#64748B] font-mono">
                 Issued under Bangladesh State Acquisition and Tenancy Act 1950 (Section 86) & Char Land Settlement Framework
@@ -82,7 +86,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
             {/* Tracking ID & Status Bar */}
             <div className="flex flex-wrap items-center justify-between text-xs bg-[#F5F1E8] p-3 rounded border border-[#D9E1DC] mb-6 font-mono">
               <div>
-                <span className="text-[#64748B]">CERTIFICATE NO: </span>
+                <span className="text-[#64748B]">SAMPLE TRACKING ID: </span>
                 <span className="font-bold text-[#123B32]">{record.trackingId}</span>
               </div>
               <div>
@@ -91,7 +95,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
               </div>
               <div className="flex items-center space-x-1 text-emerald-800 font-bold">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>SENTINEL-2 VERIFIED</span>
+                <span>DEMO DATA ONLY</span>
               </div>
             </div>
 
@@ -131,7 +135,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                   Satellite Earth Observation
                 </span>
                 <p className="text-[11px] text-[#64748B]">
-                  ESA Sentinel-2 MSI Water Index: <strong className="text-[#123B32]">{record.satelliteSentinelMatch}% Match</strong> confirming submersion since {record.submersionYear}.
+                  Example value only: <strong className="text-[#123B32]">{record.satelliteSentinelMatch}%</strong>. This screen has no connected satellite verification result.
                 </p>
               </div>
 

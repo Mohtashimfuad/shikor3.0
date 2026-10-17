@@ -178,10 +178,10 @@ export const uploadCitizenMedia = async (
       return { success: false, error: uploadErr.message };
     }
 
-    // Because bucket is private, create a temporary signed URL valid for 2 hours
+    // Keep evidence links short-lived; Storage RLS still controls link creation.
     const { data: signedData, error: signedErr } = await supabase.storage
       .from('citizen-evidence')
-      .createSignedUrl(uploadData.path, 7200);
+      .createSignedUrl(uploadData.path, 60);
 
     if (signedErr) {
       return { success: true, storagePath: uploadData.path };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Send, Copy, Check, Printer, FileText, CheckCircle2, Building, ShieldAlert } from 'lucide-react';
+import { X, Copy, Check, Printer, FileText, CheckCircle2, Building } from 'lucide-react';
 import { ClaimApplication, Language } from '../../types';
 
 interface ClaimDraftModalProps {
@@ -16,7 +16,6 @@ export const ClaimDraftModal: React.FC<ClaimDraftModalProps> = ({
   language
 }) => {
   const [copied, setCopied] = useState(false);
-  const [submittedToOffice, setSubmittedToOffice] = useState(false);
   const [activeLangTab, setActiveLangTab] = useState<'bn' | 'en'>('bn');
 
   if (!isOpen) return null;
@@ -27,10 +26,6 @@ export const ClaimDraftModal: React.FC<ClaimDraftModalProps> = ({
     navigator.clipboard.writeText(currentText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleSendToUNO = () => {
-    setSubmittedToOffice(true);
   };
 
   return (
@@ -44,8 +39,8 @@ export const ClaimDraftModal: React.FC<ClaimDraftModalProps> = ({
             <div>
               <h3 className="font-bold text-sm font-serif-title">
                 {language === 'bn' 
-                  ? 'ইউএনও ও এসিল্যান্ডের নিকট ১-নং খাস জমি বন্দোবস্ত আবেদন' 
-                  : 'Automated Khas Land Resettlement Claim Petition'}
+                  ? 'নমুনা পুনর্বাসন আবেদনপত্র'
+                  : 'Sample resettlement petition'}
               </h3>
               <p className="text-[11px] text-[#D8E8DF]">
                 {claim.targetOffice}
@@ -106,18 +101,11 @@ export const ClaimDraftModal: React.FC<ClaimDraftModalProps> = ({
 
         {/* Application Content */}
         <div className="p-6 sm:p-8 max-h-[60vh] overflow-y-auto space-y-4 font-serif text-sm text-[#1F2933]">
-          
-          {submittedToOffice && (
-            <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-xl flex items-center space-x-3 mb-4">
-              <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
-              <div className="text-xs">
-                <span className="font-bold text-emerald-950 block">Dispatched to Chilmari Upazila Land Office</span>
-                <span className="text-emerald-800">
-                  Application docket logged under Citizen File ID: <code className="font-bold">UNO-CHIL-2024-K091</code>. You will receive an SMS hearing notice.
-                </span>
-              </div>
-            </div>
-          )}
+
+          <div role="note" className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-950 font-sans">
+            <strong className="block">{language === 'bn' ? 'শুধু নমুনা — কোনো দপ্তরে দাখিল হয়নি' : 'Sample only — this has not been submitted to any office'}</strong>
+            <span>{language === 'bn' ? 'নিচের নাম, আবেদন তথ্য ও সংযুক্তির উল্লেখ উদাহরণ। Shikor কোনো দপ্তরে আবেদন, ডকেট বা SMS পাঠায়নি।' : 'Names, claim details and enclosure references below are examples. Shikor has not sent an application, docket or SMS to any office.'}</span>
+          </div>
 
           {/* Legal reference banner */}
           <div className="bg-[#D8E8DF]/60 p-3 rounded-lg border border-[#b8d6c4] text-xs font-sans text-[#123B32] flex items-center justify-between">
@@ -133,7 +121,7 @@ export const ClaimDraftModal: React.FC<ClaimDraftModalProps> = ({
           {/* Enclosures Checklist */}
           <div className="border border-[#D9E1DC] rounded-lg p-4 bg-[#F5F1E8]/60 text-xs font-sans space-y-2">
             <span className="font-bold text-[#123B32] uppercase tracking-wider block">
-              Enclosures Attached to Dossier (সংযুক্তিসমূহ):
+              Example Enclosures (নমুনা সংযুক্তি — প্রকৃত ফাইল নয়):
             </span>
             <ul className="space-y-1 text-[#64748B]">
               <li className="flex items-center space-x-2">
@@ -156,7 +144,7 @@ export const ClaimDraftModal: React.FC<ClaimDraftModalProps> = ({
         {/* Footer Actions */}
         <div className="bg-[#F5F1E8] px-6 py-4 border-t border-[#D9E1DC] flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-xs text-[#64748B]">
-            Status: <span className="font-bold text-[#123B32]">{submittedToOffice ? 'Dispatched to UNO Desk' : 'Ready for Submission'}</span>
+            {language === 'bn' ? 'অবস্থা:' : 'Status:'} <span className="font-bold text-amber-800">{language === 'bn' ? 'নমুনা — দাখিল করা হয়নি' : 'Sample — not submitted'}</span>
           </div>
 
           <div className="flex items-center space-x-3 w-full sm:w-auto">
@@ -167,20 +155,11 @@ export const ClaimDraftModal: React.FC<ClaimDraftModalProps> = ({
               Close
             </button>
             <button
-              onClick={handleSendToUNO}
-              disabled={submittedToOffice}
-              className={`w-full sm:w-auto px-6 py-2.5 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 shadow-md transition-colors ${
-                submittedToOffice
-                  ? 'bg-emerald-800 text-white cursor-default'
-                  : 'bg-[#123B32] hover:bg-[#0c2822] text-white'
-              }`}
+              onClick={handleCopy}
+              className="w-full sm:w-auto px-6 py-2.5 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 shadow-md bg-[#123B32] hover:bg-[#0c2822] text-white"
             >
-              <Send className="w-3.5 h-3.5 text-[#C6A66B]" />
-              <span>
-                {submittedToOffice
-                  ? (language === 'bn' ? 'ইউএনও দপ্তরে প্রেরিত হয়েছে' : 'Dispatched to UNO Office')
-                  : (language === 'bn' ? 'ইউএনও/এসিল্যান্ড দপ্তরে ডিজিটাল দাখিল' : 'Submit to UNO / AC Land Office')}
-              </span>
+              <Copy className="w-3.5 h-3.5 text-[#C6A66B]" />
+              <span>{language === 'bn' ? 'নমুনা খসড়া কপি করুন' : 'Copy sample draft'}</span>
             </button>
           </div>
         </div>

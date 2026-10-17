@@ -197,24 +197,24 @@ export const InteractiveErosionMap: React.FC<InteractiveErosionMapProps> = ({
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
               <span className="text-xs uppercase font-extrabold tracking-widest text-[#123B32] font-mono">
-                {language === 'bn' ? 'চলতি বছরের উপগ্রহ ভূ-উপাত্ত' : 'CURRENT YEAR SATELLITE RADAR'}
+                {language === 'bn' ? 'ইন্টারেক্টিভ মানচিত্র ডেমো' : 'INTERACTIVE MAP DEMO'}
               </span>
               <span className="w-8 h-0.5 bg-[#123B32]"></span>
               <span className="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-red-300 animate-pulse">
-                Live 2025/2026 Inundation Feed
+                DEMO DATA · NOT A LIVE FEED
               </span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-bold text-[#123B32] font-serif-title leading-tight">
               {language === 'bn' 
-                ? 'উচ্চ ঝুঁকিপূর্ণ নদীভাঙন অঞ্চল ও স্যাটেলাইট ওভারলে' 
+                ? 'নদীভাঙন অঞ্চল ও স্যাটেলাইট ওভারলে — নমুনা'
                 : 'Interactive River Erosion Zones & Satellite Overlays'}
             </h2>
 
             <p className="text-xs sm:text-sm text-[#64748B] max-w-3xl">
               {language === 'bn'
-                ? 'ইউরোপিয়ান স্পেস এজেন্সির সেন্টিনেল-২ এবং ল্যান্ডস্যাট-৯ উপগ্রহ চিত্র থেকে তৈরি চলতি বছরের নদীগর্ভে বিলীন অঞ্চল। লাল চিহ্নিত জোনগুলোতে নদী ভাঙনের বার্ষিক গতিবেগ ১৫০ থেকে ২৫০ মিটারের বেশি।'
-                : 'Explore real-time multi-spectral satellite overlays tracking active riverbank migration along the Jamuna, Brahmaputra, Padma, and Meghna delta. Click any critical zone to inspect submerged cadastral plots and citizen evidence dockets.'}
+                ? 'এটি স্থির ডেমো জোন ও মানচিত্র স্তর। এখানে কোনো চলতি বছরের ভাঙন পরিমাপ, Sentinel-2 বিশ্লেষণ বা নাগরিক নথি যুক্ত নেই।'
+                : 'This map uses static demo zones and map layers. It has no live erosion measurements, Sentinel-2 analysis, or linked citizen dossiers.'}
             </p>
           </div>
 
@@ -290,7 +290,7 @@ export const InteractiveErosionMap: React.FC<InteractiveErosionMapProps> = ({
                     baseMapType === 'satellite' ? 'bg-[#C6A66B] text-[#123B32]' : 'bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
-                  Sentinel Satellite
+                  Satellite Basemap
                 </button>
                 <button
                   onClick={() => setBaseMapType('street')}
@@ -319,7 +319,7 @@ export const InteractiveErosionMap: React.FC<InteractiveErosionMapProps> = ({
                     onChange={(e) => setShowMouzaGrid(e.target.checked)}
                     className="rounded text-[#C6A66B] focus:ring-0"
                   />
-                  <span className="text-[11px]">CS/RS Mouza Bounds</span>
+                  <span className="text-[11px]">Illustrative Mouza Grid</span>
                 </label>
 
                 <div className="flex items-center space-x-1 border-l border-white/20 pl-3">
@@ -364,7 +364,7 @@ export const InteractiveErosionMap: React.FC<InteractiveErosionMapProps> = ({
                   <span>High Risk (80-180m/yr)</span>
                 </span>
                 <span className="flex items-center gap-1 font-mono text-[#64748B] text-[11px] hidden sm:inline">
-                  Copernicus Sentinel-2 MSI • 10m Ground Resolution
+                  Static demo values • no Sentinel analysis
                 </span>
               </div>
 
@@ -416,28 +416,28 @@ export const InteractiveErosionMap: React.FC<InteractiveErosionMapProps> = ({
               <div className="grid grid-cols-2 gap-2 text-xs">
                 
                 <div className="bg-[#F5F1E8] p-2.5 rounded-xl border border-[#D9E1DC]">
-                  <span className="text-[10px] text-[#64748B] block uppercase font-mono">Current Erosion Rate</span>
+                  <span className="text-[10px] text-[#64748B] block uppercase font-mono">Sample erosion rate</span>
                   <span className="text-base font-bold text-red-700 font-mono">
                     {selectedZone.erosionRateMetersPerYear} m/yr
                   </span>
                 </div>
 
                 <div className="bg-[#F5F1E8] p-2.5 rounded-xl border border-[#D9E1DC]">
-                  <span className="text-[10px] text-[#64748B] block uppercase font-mono">Land Submerged (Yr)</span>
+                  <span className="text-[10px] text-[#64748B] block uppercase font-mono">Sample land loss (yr)</span>
                   <span className="text-base font-bold text-[#123B32] font-mono">
                     {selectedZone.annualLandLossHectares} Hectares
                   </span>
                 </div>
 
                 <div className="bg-[#F5F1E8] p-2.5 rounded-xl border border-[#D9E1DC]">
-                  <span className="text-[10px] text-[#64748B] block uppercase font-mono">Homesteads Displaced</span>
+                  <span className="text-[10px] text-[#64748B] block uppercase font-mono">Sample homesteads</span>
                   <span className="text-base font-bold text-[#123B32] font-mono">
                     {selectedZone.threatenedHomesteads.toLocaleString()}
                   </span>
                 </div>
 
                 <div className="bg-[#F5F1E8] p-2.5 rounded-xl border border-[#D9E1DC]">
-                  <span className="text-[10px] text-[#64748B] block uppercase font-mono">NDWI Water Index</span>
+                  <span className="text-[10px] text-[#64748B] block uppercase font-mono">Sample water index</span>
                   <span className="text-base font-bold text-emerald-800 font-mono">
                     {(selectedZone.ndwiWaterIndex * 100).toFixed(0)}% Saturated
                   </span>
@@ -450,9 +450,9 @@ export const InteractiveErosionMap: React.FC<InteractiveErosionMapProps> = ({
                 <div className="flex items-center justify-between text-[11px] text-[#64748B]">
                   <span className="flex items-center gap-1">
                     <Satellite className="w-3.5 h-3.5 text-[#123B32]" />
-                    <span>{selectedZone.satelliteSensor}</span>
+                    <span>No satellite source connected</span>
                   </span>
-                  <span className="font-mono text-[#123B32] font-semibold">{selectedZone.lastSatellitePass}</span>
+                  <span className="font-mono text-[#123B32] font-semibold">Demo data</span>
                 </div>
 
                 <p className="text-[11px] text-[#64748B] bg-[#Fdfbf7] p-2.5 rounded-lg border border-[#D9E1DC] leading-relaxed">

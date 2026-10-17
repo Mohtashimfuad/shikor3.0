@@ -234,7 +234,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         <div className="absolute top-6 left-1/2 -translate-x-1/2 w-48 bg-[#123B32] text-white p-2.5 rounded-lg shadow-xl border border-[#C6A66B]/50 text-left z-30 pointer-events-auto">
                           <div className="flex items-center justify-between text-[10px] text-[#C6A66B] font-bold">
                             <span>{spot.river} River</span>
-                            <span className="bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded font-mono">Verified</span>
+                            <span className="bg-amber-500/20 text-amber-200 px-1 py-0.2 rounded font-mono">SAMPLE</span>
                           </div>
                           <div className="text-xs font-bold text-white mt-0.5">{spot.name}</div>
                           <div className="text-[11px] text-[#D8E8DF] mt-1">{spot.loss}</div>
@@ -259,7 +259,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 {/* Top left badge on the image */}
                 <div className="absolute top-4 left-4 bg-[#123B32]/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/20 text-white text-xs flex items-center space-x-2">
                   <Sparkles className="w-3.5 h-3.5 text-[#C6A66B]" />
-                  <span className="font-medium text-[11px]">Free Sentinel & Mouza Overlay</span>
+                  <span className="font-medium text-[11px]">{language === 'bn' ? 'নমুনা মানচিত্র — Sentinel/Mouza ডেটা যুক্ত নয়' : 'Demo map — no Sentinel/Mouza data connected'}</span>
                 </div>
 
               </div>
@@ -268,7 +268,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
             {/* Subtle caption below map */}
             <div className="flex items-center justify-between mt-3 text-xs text-[#64748B] px-1">
-              <span>{language === 'bn' ? 'সরাসরি চর বেল্ট পাইলট নোডসমূহ' : 'Live Char Belt Pilot Nodes (Click pins)'}</span>
+              <span>{language === 'bn' ? 'নমুনা অবস্থান — লাইভ রেকর্ড নয়' : 'Sample locations — not live records'}</span>
               <span className="text-[#123B32] font-semibold">Kurigram • Sirajganj • Bhola</span>
             </div>
 

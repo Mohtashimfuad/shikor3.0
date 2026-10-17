@@ -5,11 +5,13 @@ declare const Deno: {
   serve(handler: (request: Request) => Response | Promise<Response>): void;
 };
 
-type RequestAction = 'approve' | 'reject' | 'retry_notification';
+type RequestAction = 'approve' | 'reject' | 'retry_notification' | 'assign_area';
 type NotificationRequest = {
   action: RequestAction;
   applicationId: string;
   reason?: string;
+  assignedDistrict?: string;
+  assignedUpazila?: string;
 };
 
 const appUrl = Deno.env.get('APP_PUBLIC_URL')?.replace(/\/$/, '') ?? '';
@@ -122,7 +124,7 @@ Deno.serve(async (request: Request) => {
   } catch {
     return jsonResponse({ ok: false, error: 'invalid_request' }, 400, origin);
   }
-  if (!payload || !['approve', 'reject', 'retry_notification'].includes(payload.action)
+  if (!payload || !['approve', 'reject', 'retry_notification', 'assign_area'].includes(payload.action)
       || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(payload.applicationId)) {
     return jsonResponse({ ok: false, error: 'invalid_request' }, 400, origin);
   }
@@ -130,12 +132,30 @@ Deno.serve(async (request: Request) => {
   if ((payload.action === 'reject' && !reason) || reason.length > 1000) {
     return jsonResponse({ ok: false, error: 'rejection_reason_required' }, 400, origin);
   }
+  const assignedDistrict = payload.assignedDistrict?.trim() ?? '';
+  const assignedUpazila = payload.assignedUpazila?.trim() ?? '';
+  if ((payload.action === 'approve' || payload.action === 'assign_area')
+      && (!assignedDistrict || assignedDistrict.length > 100 || assignedUpazila.length > 100)) {
+    return jsonResponse({ ok: false, error: 'assigned_area_required' }, 400, origin);
+  }
+
+  if (payload.action === 'assign_area') {
+    const { error } = await caller.rpc('set_officer_application_area', {
+      p_application_id: payload.applicationId,
+      p_assigned_district: assignedDistrict,
+      p_assigned_upazila: assignedUpazila || null,
+    });
+    if (error) return jsonResponse({ ok: false, error: 'area_not_assigned' }, 409, origin);
+    return jsonResponse({ ok: true, areaAssigned: true }, 200, origin);
+  }
 
   if (payload.action !== 'retry_notification') {
     const { error } = await caller.rpc('decide_officer_application', {
       p_application_id: payload.applicationId,
       p_decision: payload.action === 'approve' ? 'approved' : 'rejected',
       p_rejection_reason: payload.action === 'reject' ? reason : null,
+      p_assigned_district: payload.action === 'approve' ? assignedDistrict : null,
+      p_assigned_upazila: payload.action === 'approve' ? assignedUpazila || null : null,
     });
     if (error) return jsonResponse({ ok: false, error: 'decision_not_applied' }, 409, origin);
   }

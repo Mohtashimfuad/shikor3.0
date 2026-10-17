@@ -37,7 +37,7 @@ export const InteractiveEvidenceLab: React.FC<InteractiveEvidenceLabProps> = ({
         <div className="max-w-3xl mb-10">
           <div className="flex items-center space-x-2 mb-2">
             <span className="text-xs uppercase font-extrabold tracking-widest text-[#123B32] font-mono">
-              {language === 'bn' ? 'সরাসরি প্রযুক্তি ডেমো' : 'LIVE TECHNOLOGY DEMO'}
+              {language === 'bn' ? 'নমুনা প্রযুক্তি ডেমো' : 'SAMPLE TECHNOLOGY DEMO'}
             </span>
             <span className="w-8 h-0.5 bg-[#123B32]"></span>
           </div>
@@ -48,8 +48,11 @@ export const InteractiveEvidenceLab: React.FC<InteractiveEvidenceLabProps> = ({
           </h2>
           <p className="text-sm sm:text-base text-[#64748B] mt-2">
             {language === 'bn'
-              ? '২০১৮ সালের সবুজ ফসলি ভিটেমাটি বনাম ২০২৪ সালের ব্রহ্মপুত্র নদের আগ্রাসন। স্লাইডারটি টেনে দেখুন কীভাবে জমিট্রেস হারানো দাগ নম্বর শনাক্ত করে।'
-              : 'Drag the slider to compare 2018 dry homestead & agricultural land against 2024 active riverbed erosion on Plot #284 (Mouza: Char Natundiar, Chilmari).'}
+              ? 'স্লাইডারটি কেবল নকশা প্রদর্শনের জন্য। ছবিগুলো প্রকৃত উপগ্রহ চিত্র নয়; দাগ, জমির পরিমাণ ও নিমজ্জনের তথ্যও নমুনা।'
+              : 'This slider is a design demonstration. The images are not satellite imagery, and the plot, area, and inundation details are sample data.'}
+          </p>
+          <p role="note" className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-xs font-bold text-amber-950">
+            {language === 'bn' ? 'নমুনা মাত্র — এখানে কোনো প্রকৃত ভূমি-যাচাই বা সরকারি সিদ্ধান্ত দেখানো হয় না।' : 'SAMPLE ONLY — no real land verification or government decision is shown here.'}
           </p>
         </div>
 
@@ -119,8 +122,8 @@ export const InteractiveEvidenceLab: React.FC<InteractiveEvidenceLabProps> = ({
                 
                 {/* 2024 Badge */}
                 <div className="absolute top-4 right-4 bg-[#123B32]/90 text-white backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/20 text-xs font-mono shadow-md">
-                  <div className="font-bold text-[#8be3c9]">SENTINEL-2 • OCT 2024</div>
-                  <div className="text-[10px] text-white/80">Active Brahmaputra Riverbed</div>
+                  <div className="font-bold text-[#8be3c9]">SAMPLE IMAGE • NOT SENTINEL-2</div>
+                  <div className="text-[10px] text-white/80">Illustrative river layer</div>
                 </div>
               </div>
 
@@ -138,8 +141,8 @@ export const InteractiveEvidenceLab: React.FC<InteractiveEvidenceLabProps> = ({
 
                   {/* 2018 Badge */}
                   <div className="absolute top-4 left-4 bg-black/70 text-white backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/20 text-xs font-mono shadow-md">
-                    <div className="font-bold text-[#C6A66B]">HISTORICAL • MAR 2018</div>
-                    <div className="text-[10px] text-white/80">Homestead & Farmland</div>
+                    <div className="font-bold text-[#C6A66B]">SAMPLE IMAGE</div>
+                    <div className="text-[10px] text-white/80">Illustrative farmland</div>
                   </div>
                 </div>
               </div>
@@ -191,10 +194,10 @@ export const InteractiveEvidenceLab: React.FC<InteractiveEvidenceLabProps> = ({
               {/* Bottom Info Bar inside viewer */}
               <div className="absolute bottom-3 left-3 right-3 bg-[#123B32]/85 text-white backdrop-blur-md px-4 py-2 rounded-lg text-xs flex items-center justify-between">
                 <span className="flex items-center gap-1.5 font-medium">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Sentinel Surface Water Index Match: 99.4% Inundation Confirmed</span>
+                  <ShieldAlert className="w-4 h-4 text-amber-300" />
+                  <span>{language === 'bn' ? 'নমুনা ভিজ্যুয়াল — কোনো বিশ্লেষণ বা নিমজ্জন নিশ্চিত করা হয়নি' : 'Sample visual — no analysis or inundation confirmed'}</span>
                 </span>
-                <span className="font-mono text-[#C6A66B] hidden sm:inline">SAT Act Sec 86 Eligible</span>
+                <span className="font-mono text-[#C6A66B] hidden sm:inline">DEMO</span>
               </div>
 
             </div>
@@ -213,17 +216,17 @@ export const InteractiveEvidenceLab: React.FC<InteractiveEvidenceLabProps> = ({
             <div className="bg-[#F5F1E8] rounded-xl border border-[#D9E1DC] p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-[#123B32] uppercase tracking-wider">
-                  {language === 'bn' ? 'যাচাইকৃত নথি সারসংক্ষেপ' : 'VERIFIED DOSSIER'}
+                  {language === 'bn' ? 'নমুনা নথি সারসংক্ষেপ' : 'SAMPLE DOSSIER'}
                 </span>
                 <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-300">
-                  Ready to Claim
+                  SAMPLE ONLY
                 </span>
               </div>
 
               <div className="space-y-1.5 text-xs text-[#1F2933]">
                 <div className="flex justify-between py-1 border-b border-[#D9E1DC]">
                   <span className="text-[#64748B]">Claimant:</span>
-                  <span className="font-bold">Md. Abdur Rahim Mondol</span>
+                  <span className="font-bold">{language === 'bn' ? 'নমুনা দাবিদার' : 'Sample claimant'}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#D9E1DC]">
                   <span className="text-[#64748B]">Mouza / JL:</span>

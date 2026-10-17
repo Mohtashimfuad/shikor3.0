@@ -11,9 +11,9 @@ export const CommunityProofSection: React.FC<CommunityProofSectionProps> = ({ la
   const [hasVoted, setHasVoted] = useState<boolean>(false);
 
   const witnesses = [
-    { name: 'Haji Nurul Islam', role: 'Elder & Former Union Parishad Member', distance: 'Adjacent Plot #283', time: 'Signed 2 days ago' },
-    { name: 'Mst. Saleha Begum', role: 'Char Natundiar Resident (32 Years)', distance: 'South Boundary Neighbor', time: 'Signed 3 days ago' },
-    { name: 'Kazi Mosharraf', role: 'Local Primary School Headmaster', distance: 'Char Chilmari Central', time: 'Signed 4 days ago' }
+    { name: 'Sample witness 1', role: 'Illustrative role', distance: 'Example location', time: 'Sample entry' },
+    { name: 'Sample witness 2', role: 'Illustrative role', distance: 'Example location', time: 'Sample entry' },
+    { name: 'Sample witness 3', role: 'Illustrative role', distance: 'Example location', time: 'Sample entry' }
   ];
 
   const handleAttest = () => {
@@ -34,7 +34,7 @@ export const CommunityProofSection: React.FC<CommunityProofSectionProps> = ({ la
             <div className="lg:col-span-6 space-y-4">
               <div className="flex items-center space-x-2">
                 <span className="text-xs uppercase font-extrabold tracking-widest text-[#123B32] font-mono">
-                  {language === 'bn' ? 'সামাজিক সাক্ষ্য ও ব্লকচেইন টাইমস্ট্যাম্প' : 'COMMUNITY PROOF OF POSSESSION'}
+                {language === 'bn' ? 'সামাজিক সাক্ষ্য — নমুনা ডেমো' : 'COMMUNITY ATTESTATION SAMPLE DEMO'}
                 </span>
                 <span className="w-8 h-0.5 bg-[#123B32]"></span>
               </div>
@@ -47,18 +47,18 @@ export const CommunityProofSection: React.FC<CommunityProofSectionProps> = ({ la
 
               <p className="text-xs sm:text-sm text-[#64748B] leading-relaxed">
                 {language === 'bn'
-                  ? 'চরের জমি নদীগর্ভে হারিয়ে গেলে কাগজপত্রের সীমানা নষ্ট হয়ে যায়। শিকড়ে প্রতিবেশী ও স্থানীয় জনপ্রতিনিধিরা মোবাইল থেকে ডিজিটাল সাক্ষ্য প্রদান করেন। এই সাক্ষ্য কম খরচের ব্লকচেইন লেজারে টাইমস্ট্যাম্প হয়ে যায়, যা আদালতে ও এসিল্যান্ডের শুনানিতে গ্রহণযোগ্য।'
-                  : 'When river erosion engulfs a char homestead, physical landmarks disappear. Shikor enables adjacent landowners and community leaders to authenticate past possession with a single tap, anchored into an immutable, low-cost civic timestamp ledger.'}
+                  ? 'এই ইন্টার‌্যাকশনটি নমুনা মাত্র। Shikor বর্তমানে সাক্ষ্য সংগ্রহ, ব্লকচেইন টাইমস্ট্যাম্প বা সরকারি/আদালত-স্বীকৃত প্রমাণ তৈরি করে না।'
+                  : 'This interaction is a sample only. Shikor does not currently collect attestations, create blockchain timestamps, or produce government or court-recognized evidence.'}
               </p>
 
               <div className="flex items-center space-x-4 pt-2">
                 <div className="flex items-center space-x-1.5 text-xs text-[#123B32] font-bold">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Low-Cost Cryptographic Hash</span>
+                  <span>{language === 'bn' ? 'ক্রিপ্টোগ্রাফিক হ্যাশ — পরিকল্পিত' : 'Cryptographic hash — planned'}</span>
                 </div>
                 <div className="flex items-center space-x-1.5 text-xs text-[#123B32] font-bold">
                   <Users className="w-4 h-4 text-[#C6A66B]" />
-                  <span>Peer-Witness Consensus</span>
+                  <span>{language === 'bn' ? 'সাক্ষী ব্যবস্থা — পরিকল্পিত' : 'Peer-witness workflow — planned'}</span>
                 </div>
               </div>
             </div>
@@ -68,12 +68,12 @@ export const CommunityProofSection: React.FC<CommunityProofSectionProps> = ({ la
               
               <div className="flex items-center justify-between pb-3 border-b border-[#D9E1DC]">
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-[#123B32]">Live Witness Docket: Dag #284 (Rahim Mondol)</span>
-                  <div className="text-[11px] text-[#64748B] font-mono">Ledger ID: 0x8f4d92a11b6c...93e1</div>
+                  <span className="text-xs font-bold text-[#123B32]">{language === 'bn' ? 'নমুনা সাক্ষ্য তালিকা · কোনো প্রকৃত দাবি নয়' : 'Sample witness docket · no real claim'}</span>
+                  <div className="text-[11px] text-[#64748B] font-mono">{language === 'bn' ? 'ডেমো গণনা' : 'Demo count'}</div>
                 </div>
                 <div className="text-right">
                   <span className="text-xl font-bold text-[#123B32] font-mono">{attestationCount}</span>
-                  <span className="block text-[10px] text-emerald-800 font-semibold">Attested Witnesses</span>
+                  <span className="block text-[10px] text-emerald-800 font-semibold">{language === 'bn' ? 'নমুনা সাক্ষী' : 'Sample witnesses'}</span>
                 </div>
               </div>
 
@@ -109,7 +109,7 @@ export const CommunityProofSection: React.FC<CommunityProofSectionProps> = ({ la
                   <ThumbsUp className={`w-3.5 h-3.5 ${hasVoted ? 'text-emerald-700' : 'text-[#C6A66B]'}`} />
                   <span>
                     {hasVoted 
-                      ? (language === 'bn' ? 'সাক্ষ্য প্রদান রেকর্ড করা হয়েছে (ব্লকচেইন হ্যাশ তৈরি হয়েছে)' : 'Possession Attested (Cryptographic Timestamp Created)')
+                      ? (language === 'bn' ? 'ডেমো ইন্টার‌্যাকশন সম্পন্ন — কোনো সাক্ষ্য রেকর্ড হয়নি' : 'Demo interaction complete — no attestation was recorded')
                       : (language === 'bn' ? 'সাক্ষী হিসেবে প্রত্যয়ন করুন (ডেমো ক্লিক)' : 'Attest Prior Possession as Local Neighbor (Demo Click)')}
                   </span>
                 </button>

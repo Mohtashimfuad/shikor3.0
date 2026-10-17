@@ -29,6 +29,7 @@ import { OfficerStatusView } from './components/officer/OfficerStatusView';
 import { OfficerDashboardView } from './components/officer/OfficerDashboardView';
 import { AdminOfficerApplicationsView } from './components/admin/AdminOfficerApplicationsView';
 import { AccountActivationView } from './components/auth/AccountActivationView';
+import { CitizenClaimsView } from './components/claim/CitizenClaimsView';
 
 const SUPPORTED_PAGES: PageView[] = ['home', 'signin', 'signup', 'evidence', 'satellite', 'claims', 'about', 'profile', 'officer-register', 'officer-status', 'officer-dashboard', 'admin-dashboard', 'account-activation'];
 
@@ -105,6 +106,9 @@ function AppInner() {
     }
     if (loading || !profile) return;
     if (currentPage === 'profile' && profile.role !== 'citizen') {
+      redirectTo(profile.role === 'officer' ? 'officer-dashboard' : 'admin-dashboard');
+    }
+    if (currentPage === 'claims' && profile.role !== 'citizen') {
       redirectTo(profile.role === 'officer' ? 'officer-dashboard' : 'admin-dashboard');
     }
     if (currentPage === 'officer-dashboard' && profile.role !== 'officer') {
@@ -215,6 +219,10 @@ function AppInner() {
           />
         )}
 
+        {currentPage === 'claims' && profile?.role === 'citizen' && (
+          <CitizenClaimsView language={language} currentUser={profile} />
+        )}
+
         {currentPage === 'officer-register' && (
           <OfficerRegistrationView language={language} currentUser={profile} setCurrentPage={setCurrentPage} />
         )}
@@ -238,8 +246,8 @@ function AppInner() {
         {currentPage === 'evidence' && (
           <LandRecordsView
             language={language}
-            onSelectRecord={(rec) => handleOpenCertificate(rec)}
             onOpenClaimDemo={() => setIsClaimOpen(true)}
+            onStartClaim={() => setCurrentPage(profile?.role === 'citizen' ? 'claims' : 'signup')}
             setCurrentPage={setCurrentPage}
           />
         )}

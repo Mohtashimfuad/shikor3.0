@@ -67,10 +67,9 @@ export const CitizenProfileView: React.FC<CitizenProfileViewProps> = ({ language
               <button onClick={() => setCurrentPage('evidence')} className="flex items-center justify-between gap-3 p-4 rounded-xl border border-[#D9E1DC] hover:border-[#123B32] hover:bg-[#F5F1E8] text-left">
                 <span><strong className="block text-xs text-[#123B32]">{copy('Land Records', 'Land Records')}</strong><span className="block text-[11px] text-[#64748B] mt-1">{copy('নমুনা রেকর্ড ও তথ্য দেখুন', 'Browse the existing records view')}</span></span><FileText className="w-4 h-4 text-[#C6A66B] shrink-0" />
               </button>
-              <div className="p-4 rounded-xl bg-[#F5F1E8] border border-[#D9E1DC] text-xs text-[#64748B] flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-[#C6A66B] shrink-0" />
-                <span>{copy('আপনার অ্যাকাউন্টের সাথে কোনো জমির আবেদন যুক্ত নেই।', 'No land application is currently linked to this account.')}</span>
-              </div>
+              <button onClick={() => setCurrentPage('claims')} className="flex items-center justify-between gap-3 p-4 rounded-xl border border-[#D9E1DC] hover:border-[#123B32] hover:bg-[#F5F1E8] text-left">
+                <span><strong className="block text-xs text-[#123B32]">{copy('ভাঙন দাবি ও অগ্রগতি', 'Erosion claims and tracking')}</strong><span className="block text-[11px] text-[#64748B] mt-1">{copy('নিজের দাবি জমা দিন ও অবস্থা দেখুন', 'Submit a claim and track its status')}</span></span><MapPin className="w-4 h-4 text-[#C6A66B] shrink-0" />
+              </button>
             </div>
           </section>
         </div>
