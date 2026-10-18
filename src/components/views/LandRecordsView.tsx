@@ -87,7 +87,7 @@ export const LandRecordsView: React.FC<LandRecordsViewProps> = ({ language, onOp
                   </div>
                 </div>
                 <button onClick={onOpenClaimDemo} className="mt-4 bg-[#D8E8DF] hover:bg-[#c6dfd0] text-[#123B32] py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 border border-[#a8cfb9]">
-                  <FileText className="w-3.5 h-3.5" />{copy('নমুনা আবেদন দেখুন', 'Preview sample petition')}<ArrowRight className="w-3.5 h-3.5" />
+                  <FileText className="w-3.5 h-3.5" />{copy('নিজের দাবি ও খসড়ায় যান', 'Open my claims and drafts')}<ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </article>
             ))}

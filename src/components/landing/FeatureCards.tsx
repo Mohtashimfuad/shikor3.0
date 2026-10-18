@@ -67,8 +67,8 @@ export const FeatureCards: React.FC<FeatureCardsProps> = ({
       icon: Users,
       titleEn: 'For Citizens & Officials',
       titleBn: 'নাগরিক ও এসিল্যান্ডের সংযোগ',
-      descEn: 'Automated claim petitions for UNO and AC Land 1-No. Khas land resettlement.',
-      descBn: 'ইউএনও ও এসিল্যান্ডের নিকট ১-নং খাস জমি বরাদ্দের স্বয়ংক্রিয় আবেদন প্রেরণ।',
+      descEn: 'Prepare an editable application draft from your existing citizen claim. Shikor does not submit it to an office.',
+      descBn: 'বিদ্যমান নাগরিক দাবি থেকে সম্পাদনাযোগ্য আবেদন খসড়া তৈরি করুন। Shikor এটি কোনো দপ্তরে পাঠায় না।',
       action: onOpenClaimDemo
     }
   ];

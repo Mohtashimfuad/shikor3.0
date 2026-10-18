@@ -492,7 +492,7 @@ export const InteractiveErosionMap: React.FC<InteractiveErosionMapProps> = ({
                   className="w-full bg-[#D8E8DF] hover:bg-[#c6dfd0] text-[#123B32] py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center space-x-2 transition-colors border border-[#a8cfb9]"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
-                  <span>{language === 'bn' ? 'ইউএনও/এসিল্যান্ড পুনর্বাসন আবেদন' : 'File AC Land / UNO Claim'}</span>
+                  <span>{language === 'bn' ? 'নাগরিক দাবিতে যান' : 'Open citizen claims'}</span>
                 </button>
               </div>
 

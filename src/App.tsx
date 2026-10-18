@@ -5,7 +5,7 @@
 
 import React, { useCallback, useRef, useState } from 'react';
 import { PageView, Language, LandLossRecord } from './types';
-import { SAMPLE_LOSS_RECORDS, SAMPLE_CLAIM } from './data/mockData';
+import { SAMPLE_LOSS_RECORDS } from './data/mockData';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
@@ -22,7 +22,6 @@ import { SatelliteServicesView } from './components/views/SatelliteServicesView'
 import { AboutRoadmapView } from './components/views/AboutRoadmapView';
 import { CitizenProfileView } from './components/views/CitizenProfileView';
 import { CertificateModal } from './components/certificate/CertificateModal';
-import { ClaimDraftModal } from './components/claim/ClaimDraftModal';
 import { BackendSetupModal } from './components/backend/BackendSetupModal';
 import { OfficerRegistrationView } from './components/officer/OfficerRegistrationView';
 import { OfficerStatusView } from './components/officer/OfficerStatusView';
@@ -30,8 +29,9 @@ import { OfficerDashboardView } from './components/officer/OfficerDashboardView'
 import { AdminOfficerApplicationsView } from './components/admin/AdminOfficerApplicationsView';
 import { AccountActivationView } from './components/auth/AccountActivationView';
 import { CitizenClaimsView } from './components/claim/CitizenClaimsView';
+import { CommunityCorroborationView } from './components/community/CommunityCorroborationView';
 
-const SUPPORTED_PAGES: PageView[] = ['home', 'signin', 'signup', 'evidence', 'satellite', 'claims', 'about', 'profile', 'officer-register', 'officer-status', 'officer-dashboard', 'admin-dashboard', 'account-activation'];
+const SUPPORTED_PAGES: PageView[] = ['home', 'signin', 'signup', 'evidence', 'satellite', 'claims', 'corroboration', 'about', 'profile', 'officer-register', 'officer-status', 'officer-dashboard', 'admin-dashboard', 'account-activation'];
 
 function getPageFromUrl(): PageView {
   const requestedPage = new URLSearchParams(window.location.search).get('page');
@@ -70,7 +70,6 @@ function AppInner() {
 
   // Modal states
   const [isCertificateOpen, setIsCertificateOpen] = useState(false);
-  const [isClaimOpen, setIsClaimOpen] = useState(false);
   const [isBackendSetupOpen, setIsBackendSetupOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<LandLossRecord>(SAMPLE_LOSS_RECORDS[0]);
 
@@ -100,7 +99,7 @@ function AppInner() {
 
   // Route guard: redirect to sign-in for protected pages when not logged in
   React.useEffect(() => {
-    const protectedPages: PageView[] = ['profile', 'claims', 'officer-status', 'officer-dashboard', 'admin-dashboard'];
+    const protectedPages: PageView[] = ['profile', 'claims', 'corroboration', 'officer-status', 'officer-dashboard', 'admin-dashboard'];
     if (!loading && !profile && protectedPages.includes(currentPage)) {
       redirectTo('signin');
     }
@@ -129,6 +128,8 @@ function AppInner() {
     setSelectedRecord(record ?? SAMPLE_LOSS_RECORDS[0]);
     setIsCertificateOpen(true);
   };
+
+  const handleOpenClaimAssistant = () => setCurrentPage(profile?.role === 'citizen' ? 'claims' : 'signin');
 
   const handleSearch = (_query: string) => {
     setCurrentPage('evidence');
@@ -175,19 +176,19 @@ function AppInner() {
               language={language}
               setCurrentPage={setCurrentPage}
               onOpenCertificateDemo={() => handleOpenCertificate()}
-              onOpenClaimDemo={() => setIsClaimOpen(true)}
+              onOpenClaimDemo={handleOpenClaimAssistant}
             />
             <InteractiveErosionMap
               language={language}
               onOpenCertificateDemo={() => handleOpenCertificate()}
-              onOpenClaimDemo={() => setIsClaimOpen(true)}
+              onOpenClaimDemo={handleOpenClaimAssistant}
             />
             <InteractiveEvidenceLab
               language={language}
               onOpenCertificateDemo={() => handleOpenCertificate()}
-              onOpenClaimDemo={() => setIsClaimOpen(true)}
+              onOpenClaimDemo={handleOpenClaimAssistant}
             />
-            <CommunityProofSection language={language} />
+            <CommunityProofSection language={language} setCurrentPage={setCurrentPage} />
             <AboutSection
               language={language}
               setCurrentPage={setCurrentPage}
@@ -223,6 +224,10 @@ function AppInner() {
           <CitizenClaimsView language={language} currentUser={profile} />
         )}
 
+        {currentPage === 'corroboration' && profile && (
+          <CommunityCorroborationView language={language} currentUser={profile} />
+        )}
+
         {currentPage === 'officer-register' && (
           <OfficerRegistrationView language={language} currentUser={profile} setCurrentPage={setCurrentPage} />
         )}
@@ -246,7 +251,7 @@ function AppInner() {
         {currentPage === 'evidence' && (
           <LandRecordsView
             language={language}
-            onOpenClaimDemo={() => setIsClaimOpen(true)}
+            onOpenClaimDemo={handleOpenClaimAssistant}
             onStartClaim={() => setCurrentPage(profile?.role === 'citizen' ? 'claims' : 'signup')}
             setCurrentPage={setCurrentPage}
           />
@@ -257,12 +262,12 @@ function AppInner() {
             <InteractiveErosionMap
               language={language}
               onOpenCertificateDemo={() => handleOpenCertificate()}
-              onOpenClaimDemo={() => setIsClaimOpen(true)}
+              onOpenClaimDemo={handleOpenClaimAssistant}
             />
             <SatelliteServicesView
               language={language}
               onOpenCertificateDemo={() => handleOpenCertificate()}
-              onOpenClaimDemo={() => setIsClaimOpen(true)}
+              onOpenClaimDemo={handleOpenClaimAssistant}
               setCurrentPage={setCurrentPage}
             />
           </>
@@ -272,38 +277,6 @@ function AppInner() {
           <AboutRoadmapView language={language} setCurrentPage={setCurrentPage} />
         )}
 
-        {currentPage === 'claims' && (
-          <div className="py-12 bg-[#F5F1E8]">
-            <div className="max-w-4xl mx-auto px-4">
-              <div className="bg-white rounded-2xl border border-[#D9E1DC] p-8 text-center space-y-4">
-                <h2 className="text-2xl font-bold font-serif-title text-[#123B32]">
-                  {language === 'bn'
-                    ? 'ইউএনও ও এসিল্যান্ড খাসজমি পুনর্বাসন আবেদন সেল'
-                    : 'UNO & AC Land Resettlement Claim Desk'}
-                </h2>
-                <p className="text-sm text-[#64748B] max-w-xl mx-auto">
-                  {language === 'bn'
-                    ? 'চিলমারী ও কাজীপুর উপজেলার নদীভাঙনে ক্ষতিগ্রস্ত নাগরিকদের আবেদনের সরাসরি ডকেট।'
-                    : 'Submit your verifiable satellite evidence package directly to your local Upazila Land Office.'}
-                </p>
-                <div className="pt-2 flex justify-center gap-3">
-                  <button
-                    onClick={() => setIsClaimOpen(true)}
-                    className="bg-[#123B32] text-white px-6 py-2.5 rounded-lg text-xs font-bold hover:bg-[#0c2822] transition-colors"
-                  >
-                    {language === 'bn' ? 'নমুনা পুনর্বাসন আবেদন খুলুন' : 'Open Official Claim Petition'}
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage('signup')}
-                    className="bg-[#D8E8DF] text-[#123B32] px-6 py-2.5 rounded-lg text-xs font-bold hover:bg-[#c9e0d3] transition-colors"
-                  >
-                    {language === 'bn' ? 'নতুন আবেদনকারী নিবন্ধন' : 'Register New Claimant'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </main>
 
       <Footer setCurrentPage={setCurrentPage} language={language} />
@@ -312,13 +285,6 @@ function AppInner() {
         isOpen={isCertificateOpen}
         onClose={() => setIsCertificateOpen(false)}
         record={selectedRecord}
-        language={language}
-      />
-
-      <ClaimDraftModal
-        isOpen={isClaimOpen}
-        onClose={() => setIsClaimOpen(false)}
-        claim={SAMPLE_CLAIM}
         language={language}
       />
 

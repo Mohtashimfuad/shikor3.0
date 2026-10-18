@@ -5,6 +5,7 @@ export type PageView =
   | 'evidence'
   | 'satellite'
   | 'claims'
+  | 'corroboration'
   | 'about'
   | 'profile'
   | 'officer-register'
@@ -50,17 +51,4 @@ export interface LandLossRecord {
   witnessCount: number;
   certificateHash: string;
   issuedDate: string;
-}
-
-export interface ClaimApplication {
-  id: string;
-  claimantName: string;
-  targetOffice: string; // e.g., "Office of the Assistant Commissioner (Land), Chilmari, Kurigram"
-  subject: string;
-  actSection: string; // "State Acquisition and Tenancy Act 1950 (Section 86/87)"
-  applicationText: string;
-  applicationBanglaText: string;
-  recommendedKhasMouza: string;
-  submissionDate: string;
-  status: 'Draft Ready' | 'Dispatched to UNO' | 'Under Field Hearing' | 'Approved';
 }

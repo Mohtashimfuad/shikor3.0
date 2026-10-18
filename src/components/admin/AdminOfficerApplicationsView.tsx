@@ -22,6 +22,7 @@ export const AdminOfficerApplicationsView: React.FC<AdminOfficerApplicationsView
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [events, setEvents] = useState<OfficerApplicationEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [assignedDistrict, setAssignedDistrict] = useState('');
@@ -34,9 +35,10 @@ export const AdminOfficerApplicationsView: React.FC<AdminOfficerApplicationsView
 
   const refresh = useCallback(async () => {
     setLoading(true);
-    const rows = await getAdminOfficerApplications();
-    setApplications(rows);
-    setSelectedId((current) => current && rows.some((row) => row.id === current) ? current : rows[0]?.id ?? null);
+    const result = await getAdminOfficerApplications();
+    setApplications(result.applications);
+    setLoadError(result.error);
+    setSelectedId((current) => current && result.applications.some((row) => row.id === current) ? current : result.applications[0]?.id ?? null);
     setLoading(false);
   }, []);
 
@@ -127,7 +129,7 @@ export const AdminOfficerApplicationsView: React.FC<AdminOfficerApplicationsView
             <h1 className="text-2xl font-bold font-serif-title mt-2">{copy('Officer আবেদন পর্যালোচনা', 'Officer application review')}</h1>
             <p className="text-xs text-[#D8E8DF] mt-1">{currentUser.email}</p>
           </div>
-          <button onClick={() => void refresh()} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-xs font-bold"><RefreshCw className="w-3.5 h-3.5" />{copy('রিফ্রেশ', 'Refresh')}</button>
+          <button disabled={loading} onClick={() => void refresh()} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-xs font-bold disabled:opacity-50"><RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />{copy('রিফ্রেশ', 'Refresh')}</button>
         </header>
 
         <div className="flex gap-2">
@@ -142,9 +144,9 @@ export const AdminOfficerApplicationsView: React.FC<AdminOfficerApplicationsView
           <aside className="bg-white rounded-2xl border border-[#D9E1DC] shadow-sm overflow-hidden">
             <div className="p-4 border-b border-[#D9E1DC] flex justify-between items-center">
               <h2 className="text-sm font-bold text-[#123B32]">{copy('আবেদনসমূহ', 'Applications')}</h2>
-              <span className="text-[10px] px-2 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200">{applications.filter((app) => app.status === 'pending').length} {copy('অপেক্ষমাণ', 'pending')}</span>
+              <span className="text-[10px] px-2 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200">{loading ? copy('লোড হচ্ছে…', 'Loading…') : loadError ? copy('অবস্থা অনুপলব্ধ', 'Status unavailable') : `${applications.filter((app) => app.status === 'pending').length} ${copy('অপেক্ষমাণ', 'pending')}`}</span>
             </div>
-            {loading ? <div className="p-5 text-xs text-[#64748B]">{copy('লোড হচ্ছে…', 'Loading…')}</div> : sortedApplications.length === 0 ? <div className="p-6 text-center text-xs text-[#64748B]">{copy('কোনো Officer আবেদন পাওয়া যায়নি।', 'No Officer applications found.')}</div> : (
+            {loading ? <div className="p-5 text-xs text-[#64748B]">{copy('লোড হচ্ছে…', 'Loading…')}</div> : loadError ? <div role="alert" className="p-5 text-center text-xs text-rose-700">{copy('Officer আবেদন লোড করা যায়নি।', 'Officer applications could not be loaded.')} <button onClick={() => void refresh()} className="ml-2 font-bold underline">{copy('আবার চেষ্টা করুন', 'Retry')}</button></div> : sortedApplications.length === 0 ? <div className="p-6 text-center text-xs text-[#64748B]">{copy('কোনো Officer আবেদন পাওয়া যায়নি।', 'No Officer applications found.')}</div> : (
               <div className="max-h-[680px] overflow-y-auto divide-y divide-[#EEF1EF]">{sortedApplications.map((application) => (
                 <button key={application.id} onClick={() => { setSelectedId(application.id); setErrorMessage(null); setNotice(null); }} className={`w-full text-left p-4 hover:bg-[#F5F1E8] ${application.id === selectedId ? 'bg-[#F5F1E8] border-l-4 border-[#123B32]' : ''}`}>
                   <div className="flex items-start justify-between gap-2"><strong className="text-xs text-[#123B32]">{application.applicantName}</strong><span className="text-[10px] text-[#64748B]">{labelStatus(application.status)}</span></div>

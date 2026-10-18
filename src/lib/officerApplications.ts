@@ -128,13 +128,13 @@ export async function getMyOfficerApplicationEvents(applicationId: string): Prom
   }));
 }
 
-export async function getAdminOfficerApplications(): Promise<OfficerApplicationRecord[]> {
+export async function getAdminOfficerApplications(): Promise<{ applications: OfficerApplicationRecord[]; error: boolean }> {
   const { data, error } = await supabase
     .from('officer_applications')
     .select('id, status, rejection_reason, submitted_at, created_at, applicant_name, applicant_email, applicant_phone, department, designation, employee_number, office_district, office_upazila, assigned_district, assigned_upazila, appointment_letter_path, notification_status, notification_attempts, decided_at')
     .order('created_at', { ascending: false });
-  if (error || !data) return [];
-  return data.map(mapApplication);
+  if (error || !data) return { applications: [], error: true };
+  return { applications: data.map(mapApplication), error: false };
 }
 
 export async function getAdminOfficerApplicationEvents(applicationId: string): Promise<OfficerApplicationEvent[]> {

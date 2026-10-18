@@ -1,6 +1,6 @@
 import React from 'react';
-import { Satellite, Layers, Map, FileCheck, CheckCircle2, Shield, ArrowRight, Zap, ExternalLink } from 'lucide-react';
 import { Language, PageView } from '../../types';
+import { SatelliteDateComparison } from '../map/SatelliteDateComparison';
 
 interface SatelliteServicesViewProps {
   language: Language;
@@ -17,28 +17,28 @@ export const SatelliteServicesView: React.FC<SatelliteServicesViewProps> = ({
 }) => {
   const services = [
     {
-      title: 'Free Sentinel-2 & Landsat Multi-Spectral Water Tracking',
-      banglaTitle: 'ফ্রি সেন্টিনেল-২ ও ল্যান্ডস্যাট স্যাটেলাইট জলজ ট্র্যাকিং',
-      desc: 'Using open European Space Agency (Copernicus) 10-meter resolution imagery and Normalized Difference Water Index (NDWI) to identify exact month of river transgression over surveyed plots.',
-      badge: 'Open Access API'
+      title: 'Historical satellite image comparison (NASA MODIS)',
+      banglaTitle: 'ঐতিহাসিক উপগ্রহ চিত্র তুলনা (NASA MODIS)',
+      desc: 'Available below for the Chilmari study area. This daily true-color browse imagery is regional context only; it does not calculate parcel loss or verify a claim.',
+      badge: 'Available · browse imagery'
     },
     {
       title: 'CS, RS & BS Scanned Mouza Georeferencer',
       banglaTitle: 'সিএস, আরএস ও বিএস মৌজা নকশার জিওরেফারেন্সিং',
-      desc: 'Binds historical British, Pakistani, and Bangladesh cadastral mouza maps onto modern satellite WGS-84 coordinate system with high sub-meter edge precision.',
-      badge: 'GIS Cadastral'
+      desc: 'No scanned cadastral map georeferencing workflow or sub-meter boundary dataset is connected in this project yet.',
+      badge: 'Not implemented'
     },
     {
       title: 'Verifiable Land Loss Certificate (নদীভাঙন সনদ)',
       banglaTitle: 'যাচাইযোগ্য ডিজিটাল নদীভাঙন সনদপত্র',
-      desc: 'Issues a tamper-proof civic evidence certificate with cryptographic hash and QR verification for submission to Upazila Nirbahi Officers (UNO) and AC Land.',
-      badge: 'Digital Proof'
+      desc: 'Shikor can prepare a printable user-provided evidence report. It is not an official certificate, legal determination, or government submission.',
+      badge: 'Civic report · not official'
     },
     {
       title: 'Automated 1-No. Khas Land Resettlement Petition Draft',
       banglaTitle: '১-নং খাস জমি বন্দোবস্ত ও পুনর্বাসন স্বয়ংক্রিয় আবেদন',
-      desc: 'Generates formal legal petitions formatted under Section 86 of the State Acquisition and Tenancy Act 1950 for priority allocation from newly accreted char lands.',
-      badge: 'Legal Automation'
+      desc: 'No government land-service integration or legally reviewed petition automation is connected. Available claim information remains a user submission.',
+      badge: 'No government integration'
     }
   ];
 
@@ -61,10 +61,12 @@ export const SatelliteServicesView: React.FC<SatelliteServicesViewProps> = ({
           </h1>
           <p className="text-sm sm:text-base text-[#64748B] mt-2 leading-relaxed">
             {language === 'bn'
-              ? 'উন্মুক্ত উপগ্রহ চিত্র ও ঐতিহাসিক মৌজা নকশার সমন্বয়ে শিকড় (Shikor) কীভাবে ভাঙনের প্রমাণ তৈরি করে।'
-              : 'How Shikor eliminates bureaucratic dead-ends by converting free satellite data into admissible legal evidence for displaced char families.'}
+              ? 'চিলমারীর জন্য উন্মুক্ত NASA দৈনিক চিত্র তুলনা এবং শিকড়ের নাগরিক নথির বর্তমান সীমা।'
+              : 'Explore an open NASA daily-image comparison for Chilmari and the current limits of Shikor’s citizen evidence records.'}
           </p>
         </div>
+
+        <SatelliteDateComparison language={language} />
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -99,8 +101,8 @@ export const SatelliteServicesView: React.FC<SatelliteServicesViewProps> = ({
             </h3>
             <p className="text-xs text-[#D8E8DF]">
               {language === 'bn'
-                ? 'এখনই বিনামূল্যে আপনার দাগ নম্বর ও জিপিএস স্থানাঙ্ক দিয়ে ভাঙন সনদ তৈরি করুন।'
-                : 'Generate your free loss certificate now and initiate a priority claim with your local Upazila Land Office.'}
+              ? 'আপনার দেওয়া তথ্যসহ নাগরিক প্রমাণ প্রতিবেদন তৈরি করুন; এটি সরকারি সনদ বা আবেদন নয়।'
+              : 'Prepare a civic evidence report from information you provide; it is not a government certificate or filing.'}
             </p>
           </div>
 
@@ -109,13 +111,13 @@ export const SatelliteServicesView: React.FC<SatelliteServicesViewProps> = ({
               onClick={onOpenCertificateDemo}
               className="bg-[#C6A66B] hover:bg-[#b89759] text-[#123B32] px-5 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
             >
-              {language === 'bn' ? 'সনদপত্র তৈরি করুন' : 'Generate Loss Certificate'}
+              {language === 'bn' ? 'নমুনা প্রতিবেদন খুলুন' : 'Open Sample Report'}
             </button>
             <button
               onClick={onOpenClaimDemo}
               className="bg-white/10 hover:bg-white/20 text-white px-5 py-2.5 rounded-lg text-xs font-semibold border border-white/30 transition-colors"
             >
-              {language === 'bn' ? 'ইউএনও আবেদন ডেমো' : 'View UNO Claim Petition'}
+              {language === 'bn' ? 'নাগরিক দাবিতে যান' : 'Open citizen claims'}
             </button>
           </div>
         </div>

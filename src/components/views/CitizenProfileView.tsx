@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Building2, FileText, LogOut, Mail, MapPin, Phone, ShieldCheck, User } from 'lucide-react';
+import { ArrowRight, Building2, FileText, LogOut, Mail, MapPin, Phone, Satellite, ShieldCheck, User, Users } from 'lucide-react';
 import type { Language, PageView } from '../../types';
 import type { AuthProfile } from '../../context/AuthContext';
 
@@ -65,10 +65,16 @@ export const CitizenProfileView: React.FC<CitizenProfileViewProps> = ({ language
                 <span><strong className="block text-xs text-[#123B32]">{copy('Officer আবেদনের অবস্থা', 'Officer application status')}</strong><span className="block text-[11px] text-[#64748B] mt-1">{copy('নিজের আবেদনের সিদ্ধান্ত দেখুন', 'Check the decision on your application')}</span></span><ArrowRight className="w-4 h-4 text-[#C6A66B] shrink-0" />
               </button>
               <button onClick={() => setCurrentPage('evidence')} className="flex items-center justify-between gap-3 p-4 rounded-xl border border-[#D9E1DC] hover:border-[#123B32] hover:bg-[#F5F1E8] text-left">
-                <span><strong className="block text-xs text-[#123B32]">{copy('Land Records', 'Land Records')}</strong><span className="block text-[11px] text-[#64748B] mt-1">{copy('নমুনা রেকর্ড ও তথ্য দেখুন', 'Browse the existing records view')}</span></span><FileText className="w-4 h-4 text-[#C6A66B] shrink-0" />
+                <span><strong className="block text-xs text-[#123B32]">{copy('প্রকাশিত ভূমি রেকর্ড', 'Published land records')}</strong><span className="block text-[11px] text-[#64748B] mt-1">{copy('Admin কর্তৃক প্রকাশিত যাচাইকৃত এলাকার রেকর্ড দেখুন', 'Browse verified area records published by an Admin')}</span></span><FileText className="w-4 h-4 text-[#C6A66B] shrink-0" />
               </button>
               <button onClick={() => setCurrentPage('claims')} className="flex items-center justify-between gap-3 p-4 rounded-xl border border-[#D9E1DC] hover:border-[#123B32] hover:bg-[#F5F1E8] text-left">
-                <span><strong className="block text-xs text-[#123B32]">{copy('ভাঙন দাবি ও অগ্রগতি', 'Erosion claims and tracking')}</strong><span className="block text-[11px] text-[#64748B] mt-1">{copy('নিজের দাবি জমা দিন ও অবস্থা দেখুন', 'Submit a claim and track its status')}</span></span><MapPin className="w-4 h-4 text-[#C6A66B] shrink-0" />
+                <span><strong className="block text-xs text-[#123B32]">{copy('ভাঙন দাবি ও অগ্রগতি', 'Erosion claims and tracking')}</strong><span className="block text-[11px] text-[#64748B] mt-1">{copy('দাবি, আপডেট, নথি, প্রতিবেদন ও আবেদন খসড়া', 'Claims, updates, dossier, report, and application draft')}</span></span><MapPin className="w-4 h-4 text-[#C6A66B] shrink-0" />
+              </button>
+              <button onClick={() => setCurrentPage('corroboration')} className="flex items-center justify-between gap-3 p-4 rounded-xl border border-[#D9E1DC] hover:border-[#123B32] hover:bg-[#F5F1E8] text-left">
+                <span><strong className="block text-xs text-[#123B32]">{copy('সম্প্রদায়ের তথ্য', 'Community evidence')}</strong><span className="block text-[11px] text-[#64748B] mt-1">{copy('সংশ্লিষ্ট দাবির তথ্য ও পর্যালোচনার অবস্থা দেখুন', 'View claim corroboration and its review status')}</span></span><Users className="w-4 h-4 text-[#C6A66B] shrink-0" />
+              </button>
+              <button onClick={() => setCurrentPage('satellite')} className="flex items-center justify-between gap-3 p-4 rounded-xl border border-[#D9E1DC] hover:border-[#123B32] hover:bg-[#F5F1E8] text-left">
+                <span><strong className="block text-xs text-[#123B32]">{copy('উপগ্রহ চিত্র ও সেবা', 'Satellite imagery and services')}</strong><span className="block text-[11px] text-[#64748B] mt-1">{copy('চিলমারীর NASA MODIS তুলনা ও তথ্যের সীমা দেখুন', 'View the Chilmari NASA MODIS comparison and its limits')}</span></span><Satellite className="w-4 h-4 text-[#C6A66B] shrink-0" />
               </button>
             </div>
           </section>

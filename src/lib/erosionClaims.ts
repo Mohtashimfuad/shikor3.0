@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import type { EvidenceDraft } from './evidenceMetadata';
 
 export interface CitizenClaimInput {
   district: string;
@@ -12,7 +13,7 @@ export interface CitizenClaimInput {
   submergedAreaAcre: number;
   erosionYear: number;
   riverBasin: string;
-  evidence: File[];
+  evidence: EvidenceDraft[];
 }
 
 export interface CitizenClaimSummary {
@@ -22,6 +23,10 @@ export interface CitizenClaimSummary {
   upazila: string;
   unionName: string;
   mouzaName: string;
+  jlNumber: string | null;
+  khatianNumber: string;
+  dagNumber: string;
+  riverBasin: string;
   erosionYear: number;
   totalAreaAcre: number;
   submergedAreaAcre: number;
@@ -104,11 +109,15 @@ export async function getAuthorizedOfficerReviewClaims(): Promise<{ claims: Offi
 const CLAIM_EVIDENCE_MAX_BYTES = 10 * 1024 * 1024;
 const CLAIM_EVIDENCE_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/png', 'image/webp']);
 
-async function uploadClaimEvidence(userId: string, claimId: string, files: File[]): Promise<string | null> {
-  if (files.some((file) => !CLAIM_EVIDENCE_TYPES.has(file.type) || file.size <= 0 || file.size > CLAIM_EVIDENCE_MAX_BYTES)) {
-    return 'Evidence must be a non-empty PDF, JPEG, PNG, or WebP file no larger than 10 MB.';
-  }
-  for (const file of files) {
+async function uploadClaimEvidence(userId: string, claimId: string, files: EvidenceDraft[]): Promise<EvidenceUploadResult> {
+  const failedEvidence: EvidenceDraft[] = [];
+  for (const draft of files) {
+    const { file } = draft;
+    if (!CLAIM_EVIDENCE_TYPES.has(file.type) || file.size <= 0 || file.size > CLAIM_EVIDENCE_MAX_BYTES
+        || !draft.description.trim() || draft.description.trim().length > 500) {
+      failedEvidence.push(draft);
+      continue;
+    }
     const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
     const safeExtension = /^[a-z0-9]{1,8}$/.test(extension) ? extension : 'bin';
     const storagePath = `${userId}/${claimId}/${crypto.randomUUID()}.${safeExtension}`;
@@ -116,34 +125,42 @@ async function uploadClaimEvidence(userId: string, claimId: string, files: File[
       contentType: file.type,
       upsert: false,
     });
-    if (uploadError || !uploaded) return 'The file could not be uploaded. Check the connection and try again.';
+    if (uploadError || !uploaded) {
+      failedEvidence.push(draft);
+      continue;
+    }
     const digest = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
     const sha256 = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
     const { error: mediaError } = await supabase.from('claim_media').insert({
       claim_id: claimId,
       storage_path: uploaded.path,
       media_type: file.type.startsWith('image/') ? 'image' : file.type,
+      description: draft.description.trim(),
+      original_filename: file.name.slice(0, 255),
+      exif_lat: draft.latitude,
+      exif_lng: draft.longitude,
       sha256_hash: sha256,
     });
     if (mediaError) {
       await supabase.storage.from('citizen-evidence').remove([uploaded.path]);
-      return 'The uploaded file could not be attached to this claim.';
+      failedEvidence.push(draft);
     }
   }
-  return null;
+  return {
+    failedEvidence,
+    error: failedEvidence.length ? 'Some files could not be attached. Retry the failed files; successfully attached files are already saved.' : null,
+  };
 }
 
 export async function submitCitizenClaim(input: CitizenClaimInput): Promise<{
   claim: CitizenClaimSummary | null;
   error: string | null;
+  failedEvidence: EvidenceDraft[];
 }> {
   const { data: authData, error: authError } = await supabase.auth.getUser();
-  if (authError || !authData.user) return { claim: null, error: 'Sign in with a verified citizen account to submit a claim.' };
+  if (authError || !authData.user) return { claim: null, error: 'Sign in with a verified citizen account to submit a claim.', failedEvidence: input.evidence };
   const { data: role, error: roleError } = await supabase.rpc('current_access_role');
-  if (roleError || role !== 'citizen') return { claim: null, error: 'Only a verified citizen account can submit a claim.' };
-
-  const invalidFile = input.evidence.some((file) => !CLAIM_EVIDENCE_TYPES.has(file.type) || file.size <= 0 || file.size > CLAIM_EVIDENCE_MAX_BYTES);
-  if (invalidFile) return { claim: null, error: 'Evidence must be a non-empty PDF, JPEG, PNG, or WebP file no larger than 10 MB.' };
+  if (roleError || role !== 'citizen') return { claim: null, error: 'Only a verified citizen account can submit a claim.', failedEvidence: input.evidence };
 
   const trackingId = `SHK-${crypto.randomUUID().replaceAll('-', '').slice(0, 12).toUpperCase()}`;
   const { data, error } = await supabase.from('erosion_claims').insert({
@@ -160,9 +177,9 @@ export async function submitCitizenClaim(input: CitizenClaimInput): Promise<{
     submerged_area_acre: input.submergedAreaAcre,
     erosion_year: input.erosionYear,
     river_basin: input.riverBasin.trim(),
-  }).select('id, tracking_id, district, upazila, union_name, mouza_name, erosion_year, total_area_acre, submerged_area_acre, status, review_status, review_reason, reviewed_by, reviewed_at, is_satellite_verified, created_at').single();
+  }).select('id, tracking_id, district, upazila, union_name, mouza_name, jl_number, khatian_no, dag_no, river_basin, erosion_year, total_area_acre, submerged_area_acre, status, review_status, review_reason, reviewed_by, reviewed_at, is_satellite_verified, created_at').single();
 
-  if (error || !data) return { claim: null, error: 'The claim could not be submitted. Check the required details and try again.' };
+  if (error || !data) return { claim: null, error: 'The claim could not be submitted. Check the required details and try again.', failedEvidence: input.evidence };
 
   const claim: CitizenClaimSummary = {
     id: data.id,
@@ -171,6 +188,10 @@ export async function submitCitizenClaim(input: CitizenClaimInput): Promise<{
     upazila: data.upazila,
     unionName: data.union_name,
     mouzaName: data.mouza_name,
+    jlNumber: data.jl_number,
+    khatianNumber: data.khatian_no,
+    dagNumber: data.dag_no,
+    riverBasin: data.river_basin,
     erosionYear: data.erosion_year,
     totalAreaAcre: Number(data.total_area_acre),
     submergedAreaAcre: Number(data.submerged_area_acre),
@@ -183,22 +204,27 @@ export async function submitCitizenClaim(input: CitizenClaimInput): Promise<{
     createdAt: data.created_at,
   };
 
-  const evidenceError = await uploadClaimEvidence(authData.user.id, data.id, input.evidence);
-  if (evidenceError) return { claim, error: `Claim ${data.tracking_id} was created, but ${evidenceError} Open its dossier to attach the files later.` };
+  const evidenceResult = await uploadClaimEvidence(authData.user.id, data.id, input.evidence);
+  if (evidenceResult.error) return {
+    claim,
+    error: `Claim ${data.tracking_id} was created. ${evidenceResult.error}`,
+    failedEvidence: evidenceResult.failedEvidence,
+  };
 
   return {
     claim,
     error: null,
+    failedEvidence: [],
   };
 }
 
-export async function addCitizenClaimEvidence(claimId: string, files: File[]): Promise<string | null> {
+export async function addCitizenClaimEvidence(claimId: string, files: EvidenceDraft[]): Promise<EvidenceUploadResult> {
   const { data: authData, error: authError } = await supabase.auth.getUser();
-  if (authError || !authData.user) return 'Sign in with your citizen account to attach evidence.';
+  if (authError || !authData.user) return { failedEvidence: files, error: 'Sign in with your citizen account to attach evidence.' };
   const { data: role, error: roleError } = await supabase.rpc('current_access_role');
-  if (roleError || role !== 'citizen') return 'Only a citizen account can attach evidence.';
+  if (roleError || role !== 'citizen') return { failedEvidence: files, error: 'Only a citizen account can attach evidence.' };
   const { data: claim, error } = await supabase.from('erosion_claims').select('id').eq('id', claimId).maybeSingle();
-  if (error || !claim) return 'This claim is not available in your account.';
+  if (error || !claim) return { failedEvidence: files, error: 'This claim is not available in your account.' };
   return uploadClaimEvidence(authData.user.id, claimId, files);
 }
 
@@ -206,7 +232,7 @@ export async function getMyCitizenClaims(): Promise<{ claims: CitizenClaimSummar
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) return { claims: [], error: true };
   const { data, error } = await supabase.from('erosion_claims')
-    .select('id, tracking_id, district, upazila, union_name, mouza_name, erosion_year, total_area_acre, submerged_area_acre, status, review_status, review_reason, reviewed_by, reviewed_at, is_satellite_verified, created_at')
+    .select('id, tracking_id, district, upazila, union_name, mouza_name, jl_number, khatian_no, dag_no, river_basin, erosion_year, total_area_acre, submerged_area_acre, status, review_status, review_reason, reviewed_by, reviewed_at, is_satellite_verified, created_at')
     .eq('claimant_id', userData.user.id)
     .order('created_at', { ascending: false });
   if (error || !data) return { claims: [], error: true };
@@ -219,6 +245,10 @@ export async function getMyCitizenClaims(): Promise<{ claims: CitizenClaimSummar
       upazila: row.upazila,
       unionName: row.union_name,
       mouzaName: row.mouza_name,
+      jlNumber: row.jl_number,
+      khatianNumber: row.khatian_no,
+      dagNumber: row.dag_no,
+      riverBasin: row.river_basin,
       erosionYear: row.erosion_year,
       totalAreaAcre: Number(row.total_area_acre),
       submergedAreaAcre: Number(row.submerged_area_acre),
@@ -237,18 +267,38 @@ export interface CitizenClaimEvidence {
   id: string;
   storagePath: string;
   mediaType: string | null;
+  description: string | null;
+  originalFilename: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  sha256: string;
   uploadedAt: string;
+}
+
+export interface EvidenceUploadResult {
+  failedEvidence: EvidenceDraft[];
+  error: string | null;
 }
 
 export async function getCitizenClaimEvidence(claimId: string): Promise<{ files: CitizenClaimEvidence[]; error: boolean }> {
   const { data, error } = await supabase.from('claim_media')
-    .select('id, storage_path, media_type, uploaded_at')
+    .select('id, storage_path, media_type, description, original_filename, exif_lat, exif_lng, sha256_hash, uploaded_at')
     .eq('claim_id', claimId)
     .order('uploaded_at', { ascending: false });
   if (error || !data) return { files: [], error: true };
   return {
     error: false,
-    files: data.map((row) => ({ id: row.id, storagePath: row.storage_path, mediaType: row.media_type, uploadedAt: row.uploaded_at })),
+    files: data.map((row) => ({
+      id: row.id,
+      storagePath: row.storage_path,
+      mediaType: row.media_type,
+      description: row.description,
+      originalFilename: row.original_filename,
+      latitude: row.exif_lat == null ? null : Number(row.exif_lat),
+      longitude: row.exif_lng == null ? null : Number(row.exif_lng),
+      sha256: row.sha256_hash,
+      uploadedAt: row.uploaded_at,
+    })),
   };
 }
 
@@ -327,6 +377,10 @@ export interface ClaimEvidenceFile {
   id: string;
   storagePath: string;
   mediaType: string | null;
+  description: string | null;
+  originalFilename: string | null;
+  latitude: number | null;
+  longitude: number | null;
   sha256: string;
   uploadedAt: string;
 }
@@ -372,7 +426,7 @@ export async function getOfficerClaimDossier(claimId: string): Promise<{
 
   const { data: media, error: mediaError } = await supabase
     .from('claim_media')
-    .select('id, storage_path, media_type, sha256_hash, uploaded_at')
+    .select('id, storage_path, media_type, description, original_filename, exif_lat, exif_lng, sha256_hash, uploaded_at')
     .eq('claim_id', claimId)
     .order('uploaded_at', { ascending: false });
   if (mediaError) return { dossier: null, evidence: [], error: 'load_failed' };
@@ -399,6 +453,10 @@ export async function getOfficerClaimDossier(claimId: string): Promise<{
       id: row.id,
       storagePath: row.storage_path,
       mediaType: row.media_type,
+      description: row.description,
+      originalFilename: row.original_filename,
+      latitude: row.exif_lat == null ? null : Number(row.exif_lat),
+      longitude: row.exif_lng == null ? null : Number(row.exif_lng),
       sha256: row.sha256_hash,
       uploadedAt: row.uploaded_at,
     })),
